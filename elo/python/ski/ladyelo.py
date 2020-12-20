@@ -53,6 +53,14 @@ def lady_elo():
 				wplaces = racedf.loc[racedf['place']>racedf['place'][b]]
 				lplaces = racedf.loc[racedf['place']<racedf['place'][b]]
 				dplaces = racedf.loc[racedf['place']==racedf['place'][b]]
+				if(len(dplaces)>1):
+					dskier = (racedf.iloc[b]['name'])
+					dplaces = (dplaces.loc[dplaces['name']!=dskier])
+					#print(dplaces.loc[dplaces['name'].loc[[0]]])
+					#dplaces = racedf.loc[racedf['name'][b]!=dplaces['name']]
+					print(dplaces)
+				else:
+					dplaces = []
 				r1 = pelo_list[b]
 				R1 = 10**(r1/400)
 				#print(len(wplaces))
@@ -63,10 +71,10 @@ def lady_elo():
 				else:
 					wS1 = 0
 					wE1 = 0
-				if len(dplaces)>1:
+				if len(dplaces)>0:
 					dR2 = sum(10**(dplaces['pelo']/400))/len(dplaces)
 					dE1 = R1/(R1+dR2)
-					dS1 = len(dplaces)-1
+					dS1 = len(dplaces)
 				else:
 					dE1 = 0
 					dS1 =0
