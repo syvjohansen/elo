@@ -28,7 +28,7 @@ def lady_elo():
 	#ladieselodf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 
 	#'discipline', 'place', 'name', 'nation','season','race', 'pelo', 'elo']
 
-	name_pool = []
+	id_pool = []
 	#Print the unique seasons
 	seasons = (pd.unique(ladiesdf['season']))
 	for season in range(len(seasons)):
@@ -42,14 +42,14 @@ def lady_elo():
 			elo_list = []
 			racedf = seasondf.loc[seasondf['race']==races[race]]
 			racedf.reset_index(inplace=True, drop=True)
-			for a in range(len(racedf['name'])):
-				if (racedf['name'][a] not in name_pool):
-					name_pool.append(racedf['name'][a])
+			for a in range(len(racedf['id'])):
+				if (racedf['id'][a] not in id_pool):
+					id_pool.append(racedf['id'][a])
 					pelo_list.append(1300)
 				else:
 					#print("yo")
 					#Get the vet skiers line
-					vetskier = ladieselodf.loc[ladieselodf['name']==racedf['name'][a]]
+					vetskier = ladieselodf.loc[ladieselodf['id']==racedf['id'][a]]
 					pelo_list.append(vetskier['elo'].iloc[-1])
 
 				#else we have to find them and see if they are the same person
@@ -66,13 +66,14 @@ def lady_elo():
 
 		endseasondate = int(str(seasons[season])+'0500')
 		#print(endseasondate)
-		for n in range(len(name_pool)):
-			endskier = ladieselodf.loc[ladieselodf['name']==name_pool[n]]
+		for n in range(len(id_pool)):
+			endskier = ladieselodf.loc[ladieselodf['id']==id_pool[n]]
+			endname = endskier['name'].iloc[-1]
 			endpelo = endskier['elo'].iloc[-1]
 			endelo = endpelo*.85+1300*.15
 			endnation = endskier['nation'].iloc[-1]
 			endf = pd.DataFrame([[endseasondate, "Summer", "Break", "end", "L", 0, None, 0
-				, name_pool[n], endnation, seasons[season], 0, endpelo, endelo]], columns = ladieselodf.columns)
+				, endname, endnation, id_pool[n],seasons[season], 0, endpelo, endelo]], columns = ladieselodf.columns)
 			ladieselodf = ladieselodf.append(endf)
 
 	return ladieselodf	
