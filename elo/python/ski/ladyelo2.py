@@ -19,17 +19,21 @@ def EA (pelos ,place):
 	EA = QA / (QA + QB)
 	return EA
 
-def SA (pelos,place):
-	players = len(pelos)
-	return (place - 1)*[0] + (players-place)*[1]
+def SA (place_vector, place):
+	place_vector = np.array(place_vector)
+	losses = (place_vector < place).sum()
+	draws = np.count_nonzero(place_vector==place)-1
+	wins = (place_vector>place).sum()
+	return losses*[0] + draws*[0.5] + wins*[1]
 
 
 def lady_elo():
-	ladiesdf = pd.DataFrame()
+	ladieselodf = pd.DataFrame()
 	name_pool = []
 	seasons = pd.unique(ladiesdf['season'])
-	#for season in range(len(seasons)):
-	for season in range(1):
+	for season in range(len(seasons)):
+		print(seasons[season])
+	#for season in range(10):
 		seasondf = ladiesdf.loc[ladiesdf['season']==seasons[season]]
 		races = pd.unique(seasondf['race'])
 		for race in range(len(races)):
@@ -51,10 +55,23 @@ def lady_elo():
 				#else we have to find them and see if they are the same person
 				#else we have to find their last elo in ladieselodf
 			racedf['pelo'] = pelo_list
-			for b in range(len(pelo_list)):
-				print(pelo_list[b])
-				place = b+1
-				print(pelo_list[place-1] + K*(sum(SA(pelo, place)) - sum(EA(pelo,place))))
+			PLACES = list(racedf['place'])
+			for i,p in enumerate(PLACES):
+				elo_list.append(pelo_list[i] + K*(sum(SA(PLACES, PLACES[i])) - sum(EA(pelo_list, i))))
+			racedf['elo'] = elo_list
+			ladieselodf = ladieselodf.append(racedf)
+		endseasondate = int(str(seasons[season])+'0500')
+		for n in range(len(name_pool)):
+			endskier = ladieselodf.loc[ladieselodf['name']==name_pool[n]]
+			endpelo = endskier['elo'].iloc[-1]
+			endelo = endpelo*.85+1300*.15
+			endnation = endskier['nation'].iloc[-1]
+			endf = pd.DataFrame([[endseasondate, "Summer", "Break", "end", "L", 0, None, 0
+				, name_pool[n], endnation, seasons[season], 0, endpelo, endelo]], columns = ladieselodf.columns)
+			ladieselodf = ladieselodf.append(endf)
 
+	return ladieselodf
 
-print(lady_elo())
+ladyelo2 = (lady_elo())
+ladyelo2.to_pickle("~/ski/elo/python/ski/ladyelo2.pkl")
+ladyelo2.to_excel("~/ski/elo/python/ski/ladyelo2.xlsx")

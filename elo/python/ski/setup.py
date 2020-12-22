@@ -8,7 +8,7 @@ xlsx = pd.ExcelFile('~/ski/elo/excel365/all.xlsx')
 def ladies_setup():
 	#Step 1 is to read the sheet and assign column names
 	ladiesdf = pd.read_excel(xlsx, sheet_name="Ladies", header=None)
-	ladiesdf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 'discipline', 'place', 'name', 'nation']
+	ladiesdf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 'discipline', 'place', 'name', 'nation', 'id']
 	lady_seasons = []
 
 	#This is to get rid of the space before the nations
@@ -72,7 +72,7 @@ def ladies_setup():
 
 def men_setup():
 	mendf = pd.read_excel(xlsx, sheet_name="Men", header=None)
-	mendf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 'discipline', 'place', 'name', 'nation']
+	mendf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 'discipline', 'place', 'name', 'nation', 'id']
 	mendf['nation'] = mendf['nation'].str.lstrip()
 
 	male_seasons = []
