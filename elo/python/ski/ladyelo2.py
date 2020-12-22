@@ -54,11 +54,11 @@ def lady_elo():
 
 				#else we have to find them and see if they are the same person
 				#else we have to find their last elo in ladieselodf
-				
+
 			racedf['pelo'] = pelo_list
 			PLACES = list(racedf['place'])
-            for i,p in enumerate(PLACES):
-                elo_list.append(pelo_list[i] + K*(sum(SA(PLACES, PLACES[i])) - sum(EA(pelo_list,i))))
+			for i,p in enumerate(PLACES):
+				elo_list.append(pelo_list[i] + K*(sum(SA(PLACES, PLACES[i])) - sum(EA(pelo_list,i))))
 
 			racedf['elo'] = elo_list
 			ladieselodf = ladieselodf.append(racedf)
