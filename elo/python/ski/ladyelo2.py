@@ -54,6 +54,7 @@ def lady_elo():
 
 				#else we have to find them and see if they are the same person
 				#else we have to find their last elo in ladieselodf
+				
 			racedf['pelo'] = pelo_list
 			PLACES = list(racedf['place'])
             for i,p in enumerate(PLACES):
@@ -62,6 +63,7 @@ def lady_elo():
 			racedf['elo'] = elo_list
 			ladieselodf = ladieselodf.append(racedf)
 			#print(ladieselodf)
+
 		endseasondate = int(str(seasons[season])+'0500')
 		#print(endseasondate)
 		for n in range(len(name_pool)):
