@@ -72,7 +72,7 @@ def male_elo():
 			endpelo = endskier['elo'].iloc[-1]
 			endelo = endpelo*.85+1300*.15
 			endnation = endskier['nation'].iloc[-1]
-			endf = pd.DataFrame([[endseasondate, "Summer", "Break", "end", "L", 0, None, 0
+			endf = pd.DataFrame([[endseasondate, "Summer", "Break", "end", "M", 0, None, 0
 				, endname, endnation, id_pool[n],seasons[season], 0, endpelo, endelo]], columns = menelodf.columns)
 			menelodf = menelodf.append(endf)
 

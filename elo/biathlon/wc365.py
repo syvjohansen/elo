@@ -106,6 +106,7 @@ def get_skier(worldcup_page, distance, sex2):
 	places = []
 	skier = []
 	nation = []
+	ski_ids = []
 	sex = []
 	people = 1
 	if(distance == "Mixed Relay"):
@@ -120,11 +121,13 @@ def get_skier(worldcup_page, distance, sex2):
 				else:
 					sex.append("M")
 				places.append(body[a].text)
+				
+				
 				skier.append(body[a+3].text.strip('\n').strip(" "))
 				nation.append(body[a+5].text.strip('\n'))
 				if (people>12):
 					break
-		return [places, skier, nation, sex]
+		return [places, skier, nation, sex, ski_ids]
 	elif(distance == "Single Mixed Relay"):
 		for a in range(len(body)):
 			if(a%10==0):
@@ -141,7 +144,7 @@ def get_skier(worldcup_page, distance, sex2):
 				nation.append(body[a+5].text.strip('\n'))
 				if (people>10):
 					break
-		return [places, skier, nation, sex]
+		return [places, skier, nation, sex, ski_ids]
 	else:
 		for a in range(len(body)):
 		
@@ -154,10 +157,15 @@ def get_skier(worldcup_page, distance, sex2):
 					places.append(body[a].text)
 
 					skier.append(body[a+2].text.strip('\n'))
+					ski_id = str(body[a+2])
+					ski_id = ski_id.split("ID=")[1]
+					ski_id = str(ski_id.split("\"")[0])
+					#print(ski_id)
+					ski_ids.append(ski_id)
 
 					nation.append(body[a+4].text.strip('\n'))
 					sex.append(sex2)
-		return [places, skier, nation, sex]
+		return [places, skier, nation, sex, ski_ids]
 
 
 def get_team(worldcup_page, distance):
@@ -186,6 +194,7 @@ def get_worldcup():
 	ladies_worldcup_page1 = []
 	
 	for a in range(1958, 2021):
+	#for a in range(2003, 2004):
 		print(a)
 		men_worldcup_page0 = "https://skisport365.com/skiskyting/rennkalender.php?aar="+str(a)
 		ladies_worldcup_page0 = "https://skisport365.com/skiskyting/rennkalender.php?aar="+str(a)+"&k=F"
@@ -210,7 +219,9 @@ def get_worldcup():
 		for b in ladies_worldcup_soup0.find_all('a', {'class':'ablue'}, href=True):
 			ladies_worldcup_page1.append('https://skisport365.com/skiskyting/'+b['href'])
 		
-		
+	
+
+	#print(ladies_worldcup_page1)
 	
 	men_worldcup_page3 = []
 	ladies_worldcup_page3 = []
@@ -231,8 +242,12 @@ def get_worldcup():
 		places = skiers[0]
 		ski = skiers[1]
 		nation = skiers[2]
-		sex = skiers[3]
-		menwc = [date, city, country, category, sex, distance, technique, places, ski, nation]
+		#sex = skiers[3]
+		try:
+			ski_ids = skiers[4]
+		except:
+			continue
+		menwc = [date, city, country, category, sex, distance, technique, places, ski, nation, ski_ids]
 		print(date)
 		if(distance!="Rel" and distance!="Mixed Relay" and distance!="Single Mixed Relay"):
 			men_worldcup.append(menwc)
@@ -240,6 +255,8 @@ def get_worldcup():
 	for a in range(len(ladies_worldcup_page1)):
 		table = get_table(ladies_worldcup_page1[a])
 		date = table[0]
+		print(date)
+		#print(ladies_worldcup_page1[a])
 		#print(date)
 		city = table[1]
 		country = table[2]
@@ -252,8 +269,13 @@ def get_worldcup():
 		places = skiers[0]
 		ski = skiers[1]
 		nation = skiers[2]
-		ladieswc = [date, city, country, category, sex, distance, technique, places, ski, nation]
-		print(date)
+		#print(skiers[4])
+		try:
+			ski_ids = skiers[4]
+		except:
+			continue
+		ladieswc = [date, city, country, category, sex, distance, technique, places, ski, nation, ski_ids]
+		#print(date)
 		if(distance!="Rel" and distance!="Mixed Relay" and distance!="Single Mixed Relay"):
 			ladies_worldcup.append(ladieswc)
 
@@ -297,6 +319,7 @@ for g in range(len(worldcup)):
 				ladies.write(row, col+8, worldcup[g][a][8][b])
 				#print(worldcup[g][a][8][b])
 				ladies.write(row, col+9, worldcup[g][a][9][b])
+				ladies.write(row, col+10, worldcup[g][a][10][b])
 				#print(worldcup[g][a][9][b])
 				row+=1
 	else:
@@ -308,12 +331,13 @@ for g in range(len(worldcup)):
 				men.write(row, col+1, worldcup[g][a][1])
 				men.write(row, col+2, worldcup[g][a][2])
 				men.write(row, col+3, worldcup[g][a][3])
-				men.write(row, col+4, worldcup[g][a][4][b])
+				men.write(row, col+4, worldcup[g][a][4])
 				men.write(row, col+5, worldcup[g][a][5])
 				men.write(row, col+6, worldcup[g][a][6])
 				men.write(row, col+7, worldcup[g][a][7][b])
 				men.write(row, col+8, worldcup[g][a][8][b])
 				men.write(row, col+9, worldcup[g][a][9][b])
+				men.write(row, col+10, worldcup[g][a][10][b])
 				row+=1
 
 
