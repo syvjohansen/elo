@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladiesdf.pkl")
 
@@ -18,7 +19,7 @@ def lady_elo():
 
 	
 	for season in range(len(seasons)):
-	
+		
 	#for season in range(10):
 		print(seasons[season])
 
