@@ -57,9 +57,10 @@ def elo(pickle_df, base_elo = 1300, K = 1, discount = 0.85):
     for season in seasons:
         print(season)
         season_df = pickle_df.loc[pickle_df['season']==season]
-
         # Races, update athlete ELO each race
         races = pd.unique(season_df['race'])
+        K = max(pickle_df['race'])/len(races)
+      #  print(K)
         for race in races:
             race_df = season_df.loc[season_df['race']==race]
             ski_ids_r = list(race_df['id'])
@@ -94,12 +95,12 @@ if __name__ == "__main__":
     ## Execute only if run as a script
 
     # Ladies:
-    ladies_df = pd.read_pickle("~/Desktop/elo/elo/python/ski/ladiesdf.pkl")
+    ladies_df = pd.read_pickle("~/ski/elo/python/ski/ladiesdf.pkl")
     df = elo(ladies_df)
     df.to_csv('ladies_test.csv',index=False)
     
     # Men: 
-    men_df = pd.read_pickle("~/Desktop/elo/elo/python/ski/mendf.pkl")
+    men_df = pd.read_pickle("~/ski/elo/python/ski/mendf.pkl")
     df = elo(men_df)
     df.to_csv('men_test.csv',index=False)
 
