@@ -28,7 +28,7 @@ def calc_Svec(Place_vector):
         Output:
             S_vector: the actual score of each athlete (winning, drawing, or losing) against the (n-1) athletes, an array of float values, [S1, S2, ... Sn]
                 win = 1
-                draw = 1 / (# of athletes tied)
+                draw = 1 / 2
                 loss = 0 
     '''
     n, n_unique = len(Place_vector), len(set(Place_vector))
