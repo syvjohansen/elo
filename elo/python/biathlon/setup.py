@@ -5,6 +5,8 @@ xlsx = pd.ExcelFile('~/ski/elo/biathlon/excel365/all.xlsx')
 
 #ladies_places = list(int(ladiesdf['place']))
 
+
+
 def ladies_setup():
 	#Step 1 is to read the sheet and assign column names
 	ladiesdf = pd.read_excel(xlsx, sheet_name="Ladies", header=None)
@@ -13,6 +15,11 @@ def ladies_setup():
 
 	#This is to get rid of the space before the nations
 	ladiesdf['nation'] = ladiesdf['nation'].str.lstrip()
+	ladiesdf['id'] = ladiesdf['id'].str.split("&")
+	ladiesdf['id'] = ladiesdf['id'].str[0].astype(int)
+	#print(ladiesdf['id'])
+		#print(ladiesdf['id'])
+
 
 	#This is to assign seasons in the data frame
 	for a in range(len(ladiesdf['date'])):
@@ -119,14 +126,14 @@ def men_setup():
 	return mendf
 
 ladiesdf = ladies_setup()
-ladiesdf.to_pickle("~/ski/elo/python/biathlon/ladiesdf.pkl")
-ladiesdf.to_excel("~/ski/elo/python/biathlon/ladiesdf.xlsx")
+ladiesdf.to_pickle("~/ski/elo/python/biathlon/ladies/ladiesdf.pkl")
+ladiesdf.to_excel("~/ski/elo/python/biathlon/ladies/ladiesdf.xlsx")
 
 
 
 mendf = men_setup()
-mendf.to_pickle("~/ski/elo/python/biathlon/mendf.pkl")
-mendf.to_excel("~/ski/elo/python/biathlon/mendf.xlsx")
+mendf.to_pickle("~/ski/elo/python/biathlon/men/mendf.pkl")
+mendf.to_excel("~/ski/elo/python/biathlon/men/mendf.xlsx")
 
 
 
