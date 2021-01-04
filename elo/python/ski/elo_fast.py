@@ -95,10 +95,7 @@ if __name__ == "__main__":
     ## Execute only if run as a script
 
     # Ladies:
-<<<<<<< HEAD
-=======
     ladies_df = pd.read_pickle("~/ski/elo/python/ski/ladiesdf.pkl")
->>>>>>> 69e7d6675a46b2dc24a3c26d2d8a320b66e4ba5f
     df = elo(ladies_df)
     df.to_csv('ladies_test.csv',index=False)
     
