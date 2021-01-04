@@ -94,7 +94,6 @@ if __name__ == "__main__":
     ## Execute only if run as a script
 
     # Ladies:
-    ladies_df = pd.read_pickle("~/Desktop/elo/elo/python/ski/ladiesdf.pkl")
     df = elo(ladies_df)
     df.to_csv('ladies_test.csv',index=False)
     
@@ -102,9 +101,6 @@ if __name__ == "__main__":
     men_df = pd.read_pickle("~/Desktop/elo/elo/python/ski/mendf.pkl")
     df = elo(men_df)
     df.to_csv('men_test.csv',index=False)
-
-
-
 
 
 
