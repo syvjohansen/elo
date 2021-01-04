@@ -92,8 +92,8 @@ def fantasy(startlist):
 
 def elo(fantasydf):
 	skier_elo = []
-	df = pd.read_pickle("~/ski/elo/python/ski/men/varmen_all.pkl")
-	ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies_all.pkl")
+	df = pd.read_pickle("~/ski/elo/python/ski/men/varmen.pkl")
+	ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies.pkl")
 	df = df.append(ladiesdf, ignore_index = True)
 	df['name'] = df['name'].str.replace('ø', 'oe')
 
@@ -133,6 +133,19 @@ def elo(fantasydf):
 			skier_elo.append(1300)
 		
 	fantasydf['elo'] = skier_elo
+	mendf = fantasydf.loc[fantasydf['sex']=='m']
+	mendf = mendf.sort_values(by='elo', ascending=False)
+	mendf = mendf[:30]
+	stage = [50, 46, 43, 40, 37, 34, 32, 30, 28, 26, 24, 22, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+	wc = [100, 80, 60, 50, 45, 40, 36, 32, 29, 26, 24, 2, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+	mendf['points'] = stage
+	ladiesdf = fantasydf.loc[fantasydf['sex']=='f']
+	ladiesdf = ladiesdf.sort_values(by='elo', ascending=False)
+	ladiesdf = ladiesdf[:30]
+	ladiesdf['points'] = stage
+	fantasydf = mendf
+	fantasydf = fantasydf.append(ladiesdf)
+
 	return fantasydf
 			
 
@@ -147,6 +160,7 @@ startlist = fis()
 #print(startlist)
 fantasydf = (fantasy(startlist))
 fantasydf = elo(fantasydf)
+
 fantasydf.to_pickle("~/ski/elo/knapsack/fantasydf.pkl")
 fantasydf.to_excel("~/ski/elo/knapsack/fantasydf.xlsx")
 
