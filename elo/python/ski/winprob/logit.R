@@ -1,8 +1,8 @@
 library(readxl)
 library(ggplot2)
 library(aod)
-win_prob = read_excel("~/ski/elo/python/ski/winprob/varladieswinprob.xlsx", 
-                      col_names = TRUE, na = "NA")
+#win_prob = read_excel("~/ski/elo/python/ski/winprob/varladieswinprob.xlsx", col_names = TRUE, na = "NA")
+win_prob = read_excel("~/ski/elo/python/ski/winprob/varmenwinprob.xlsx", col_names = TRUE, na = "NA")
 print(win_prob)
 win_probdf = data.frame(win_prob)
 win_probdf = win_prob[,2:3]

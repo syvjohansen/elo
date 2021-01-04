@@ -2,12 +2,12 @@ import pandas as pd
 import numpy as np
 
 
-#refdf2 = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies.pkl")
+refdf2 = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies.pkl")
 #refdf2 = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies_distance.pkl")
-refdf2 = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies_all.pkl")
+#refdf2 = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies_all.pkl")
 #refdf2 = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies_sprint.pkl")
 #refdf2 = refdf2.loc[refdf2['season']==2020]
-refdf2 = refdf2.loc[refdf2['city']=="Tour de Ski"]
+#refdf2 = refdf2.loc[refdf2['city']=="Tour de Ski"]
 print(refdf2)
 #race = refdf2.loc[refdf2['race']==max(refdf2['race'])]
 
@@ -32,6 +32,8 @@ for season in seasons:
 	#races=[1]
 
 	for race in races:
+		if(race==0):
+			continue
 		#print(race)
 		racedf = seasondf.loc[seasondf['race']==race]
 		#print(racedf)

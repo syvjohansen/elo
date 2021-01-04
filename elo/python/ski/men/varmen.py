@@ -217,8 +217,8 @@ def male_elo(mendf, base_elo=1300, K=1, discount=.85):
     return menelodf 
 
 varmendf = mendf
-varmendf = distance(varmendf, "Sprint")
-varmendf = discipline(varmendf, "C")
+varmendf = distance(varmendf, "asdhioas")
+varmendf = discipline(varmendf, "F")
 #varmendf = season(varmendf, 0, 9999)
 varmenelo = male_elo(varmendf)
 varmenelo.to_pickle("~/ski/elo/python/ski/men/varmen.pkl")
