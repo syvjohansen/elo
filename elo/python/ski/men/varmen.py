@@ -11,7 +11,7 @@ mendf = pd.read_pickle("~/ski/elo/python/ski/men/mendf.pkl")
 update_mendf = pd.read_pickle("~/ski/elo/python/ski/men/menupdate_setup.pkl")
 mendf = mendf.append(update_mendf, ignore_index=True)
 
-
+pd.options.mode.chained_assignment = None
 
 
 
@@ -217,11 +217,11 @@ def male_elo(mendf, base_elo=1300, K=1, discount=.85):
     return menelodf 
 
 varmendf = mendf
-varmendf = distance(varmendf, "sfdsf")
-varmendf = discipline(varmendf, "F")
+#varmendf = distance(varmendf, "sfdsf")
+#varmendf = discipline(varmendf, "F")
 #varmendf = season(varmendf, 0, 9999)
 varmenelo = male_elo(varmendf)
-varmenelo.to_pickle("~/ski/elo/python/ski/men/varmen.pkl")
-varmenelo.to_excel("~/ski/elo/python/ski/men/varmen.xlsx")
+varmenelo.to_pickle("~/ski/elo/python/ski/men/varmen_all.pkl")
+varmenelo.to_excel("~/ski/elo/python/ski/men/varmen_all.xlsx")
 print(time.time() - start_time)
 

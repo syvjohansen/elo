@@ -92,8 +92,8 @@ def fantasy(startlist):
 
 def elo(fantasydf):
 	skier_elo = []
-	df = pd.read_pickle("~/ski/elo/python/ski/men/varmen.pkl")
-	ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies.pkl")
+	df = pd.read_pickle("~/ski/elo/python/ski/men/varmen_all.pkl")
+	ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies_all.pkl")
 	df = df.append(ladiesdf, ignore_index = True)
 	df['name'] = df['name'].str.replace('ø', 'oe')
 
