@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import numpy as np
 import pandas as pd
 import time
 import json
@@ -16,8 +17,8 @@ def fis():
 	sex = []
 	count = 0
 	#start with the men
-	startlist_list = ['https://www.fis-ski.com/DB/general/results.html?sectorcode=CC&raceid=36661#results',
-'https://www.fis-ski.com/DB/general/results.html?sectorcode=CC&raceid=36660']
+	startlist_list = ['https://www.fis-ski.com/DB/general/results.html?sectorcode=CC&raceid=36522',
+'https://www.fis-ski.com/DB/general/results.html?sectorcode=CC&raceid=36521']
 	for a in startlist_list:
 		startlist = BeautifulSoup(urlopen(a), 'html.parser')
 	#print(startlist)
@@ -90,10 +91,37 @@ def fantasy(startlist):
 	fantasy_df = pd.DataFrame(data=d)
 	return fantasy_df
 
+def pursuit(fantasydf):
+	stage = [50, 46, 43, 40, 37, 34, 32, 30, 28, 26, 24, 22, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+	wc = [100, 80, 60, 50, 45, 40, 36, 32, 29, 26, 24, 2, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+	mendf = fantasydf.loc[fantasydf['sex']=='m']
+	mendf = mendf.sort_values(by='elo', ascending=False)
+	mendf['pursuit'] = np.arange(1, len(mendf['name'])+1, 1)
+	mendf['pursuit'] = .3*mendf['pursuit'] + .7*mendf['place']
+	mendf = mendf.sort_values(by='pursuit', ascending=True)
+	mendf['pursuit'] = np.arange(1, len(mendf['name'])+1, 1)
+	mendf = mendf[:30]
+	mendf['points'] = stage
+
+	ladiesdf = fantasydf.loc[fantasydf['sex']=='f']
+	ladiesdf = ladiesdf.sort_values(by='elo', ascending=False)
+	ladiesdf['pursuit'] = np.arange(1,len(ladiesdf['name'])+1,1)
+	ladiesdf['pursuit'] = .3*ladiesdf['pursuit'] + .7*ladiesdf['place']
+	ladiesdf = ladiesdf.sort_values(by='pursuit', ascending=True)
+	ladiesdf['pursuit'] = np.arange(1,len(ladiesdf['name'])+1,1)
+	ladiesdf = ladiesdf[:30]
+	ladiesdf['points'] = stage
+
+	fantasydf = mendf
+	fantasydf = fantasydf.append(ladiesdf)
+	return fantasydf
+
 def elo(fantasydf):
+	stage = [50, 46, 43, 40, 37, 34, 32, 30, 28, 26, 24, 22, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+	wc = [100, 80, 60, 50, 45, 40, 36, 32, 29, 26, 24, 2, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 	skier_elo = []
-	df = pd.read_pickle("~/ski/elo/python/ski/men/varmen_all.pkl")
-	ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies_all.pkl")
+	df = pd.read_pickle("~/ski/elo/python/ski/men/varmen_spec.pkl")
+	ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies_spec.pkl")
 	df = df.append(ladiesdf, ignore_index = True)
 	df['name'] = df['name'].str.replace('ø', 'oe')
 
@@ -134,15 +162,17 @@ def elo(fantasydf):
 		
 	fantasydf['elo'] = skier_elo
 	mendf = fantasydf.loc[fantasydf['sex']=='m']
-	mendf = mendf.sort_values(by='elo', ascending=False)
-	mendf = mendf[:30]
-	stage = [50, 46, 43, 40, 37, 34, 32, 30, 28, 26, 24, 22, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-	wc = [100, 80, 60, 50, 45, 40, 36, 32, 29, 26, 24, 2, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-	mendf['points'] = stage
+	#Edit out these next three and the ladies three for pursuit.  Two for actual
+	#Comment out next two for 
+	#mendf = mendf.sort_values(by='elo', ascending=False)
+	#mendf = mendf[:30]
+	#mendf['points'] = stage
 	ladiesdf = fantasydf.loc[fantasydf['sex']=='f']
-	ladiesdf = ladiesdf.sort_values(by='elo', ascending=False)
-	ladiesdf = ladiesdf[:30]
-	ladiesdf['points'] = stage
+	#ladiesdf = ladiesdf.sort_values(by='elo', ascending=False)
+	#ladiesdf = ladiesdf[:30]
+	#ladiesdf['points'] = stage
+	mendf['place'] = np.arange(1, len(mendf['name'])+1, 1)
+	ladiesdf['place'] = np.arange(1,len(ladiesdf['name'])+1,1)
 	fantasydf = mendf
 	fantasydf = fantasydf.append(ladiesdf)
 
@@ -160,7 +190,8 @@ startlist = fis()
 #print(startlist)
 fantasydf = (fantasy(startlist))
 fantasydf = elo(fantasydf)
+fantasydf = pursuit(fantasydf)
 
-fantasydf.to_pickle("~/ski/elo/knapsack/fantasydf.pkl")
-fantasydf.to_excel("~/ski/elo/knapsack/fantasydf.xlsx")
+fantasydf.to_pickle("~/ski/elo/knapsack/fantasydf_spec.pkl")
+fantasydf.to_excel("~/ski/elo/knapsack/fantasydf_spec.xlsx")
 

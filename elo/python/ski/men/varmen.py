@@ -18,6 +18,7 @@ pd.options.mode.chained_assignment = None
 def dates(mendf, date1, date2):
     mendf = mendf.loc[mendf['date']>=date1]
     mendf = mendf.loc[mendf['date']<=date2]
+    #print(mendf)
     return mendf
 
 def city(mendf, cities):
@@ -217,8 +218,9 @@ def male_elo(mendf, base_elo=1300, K=1, discount=.85):
     return menelodf 
 
 varmendf = mendf
-#varmendf = distance(varmendf, "sfdsf")
-#varmendf = discipline(varmendf, "F")
+#varmendf = dates(varmendf, 0, 20210104)
+#varmendf = distance(varmendf, "dsuh")
+#varmendf = discipline(varmendf, "C")
 #varmendf = season(varmendf, 0, 9999)
 varmenelo = male_elo(varmendf)
 varmenelo.to_pickle("~/ski/elo/python/ski/men/varmen_all.pkl")

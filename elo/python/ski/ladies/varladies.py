@@ -217,8 +217,9 @@ def male_elo(ladiesdf, base_elo=1300, K=1, discount=.85):
     return ladieselodf 
 
 varladiesdf = ladiesdf
-#varladiesdf = distance(varladiesdf, "sff")
-#varladiesdf = discipline(varladiesdf, "F")
+#varladiesdf = dates(varladiesdf, 0, 20210104)
+#varladiesdf = distance(varladiesdf, "sfhido")
+#varladiesdf = discipline(varladiesdf, "C")
 #varladiesdf = season(varladiesdf, 0, 9999)
 varladieselo = male_elo(varladiesdf)
 varladieselo.to_pickle("~/ski/elo/python/ski/ladies/varladies_all.pkl")
