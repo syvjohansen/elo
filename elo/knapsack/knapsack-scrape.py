@@ -17,8 +17,8 @@ def fis():
 	sex = []
 	count = 0
 	#start with the men
-	startlist_list = ['https://www.fis-ski.com/DB/general/results.html?sectorcode=CC&raceid=36522',
-'https://www.fis-ski.com/DB/general/results.html?sectorcode=CC&raceid=36521']
+	startlist_list = ['https://www.fis-ski.com/DB/general/results.html?sectorcode=CC&raceid=36524',
+'https://www.fis-ski.com/DB/general/results.html?sectorcode=CC&raceid=36523']
 	for a in startlist_list:
 		startlist = BeautifulSoup(urlopen(a), 'html.parser')
 	#print(startlist)
@@ -162,15 +162,15 @@ def elo(fantasydf):
 		
 	fantasydf['elo'] = skier_elo
 	mendf = fantasydf.loc[fantasydf['sex']=='m']
-	#Edit out these next three and the ladies three for pursuit.  Two for actual
-	#Comment out next two for 
-	#mendf = mendf.sort_values(by='elo', ascending=False)
-	#mendf = mendf[:30]
-	#mendf['points'] = stage
+	#Edit out these next three and the ladies three for pursuit.  One for actual
+	
+	mendf = mendf.sort_values(by='elo', ascending=False)
+	mendf = mendf[:30]
+	mendf['points'] = stage
 	ladiesdf = fantasydf.loc[fantasydf['sex']=='f']
-	#ladiesdf = ladiesdf.sort_values(by='elo', ascending=False)
-	#ladiesdf = ladiesdf[:30]
-	#ladiesdf['points'] = stage
+	ladiesdf = ladiesdf.sort_values(by='elo', ascending=False)
+	ladiesdf = ladiesdf[:30]
+	ladiesdf['points'] = stage
 	mendf['place'] = np.arange(1, len(mendf['name'])+1, 1)
 	ladiesdf['place'] = np.arange(1,len(ladiesdf['name'])+1,1)
 	fantasydf = mendf
@@ -190,7 +190,7 @@ startlist = fis()
 #print(startlist)
 fantasydf = (fantasy(startlist))
 fantasydf = elo(fantasydf)
-fantasydf = pursuit(fantasydf)
+#fantasydf = pursuit(fantasydf)
 
 fantasydf.to_pickle("~/ski/elo/knapsack/fantasydf_spec.pkl")
 fantasydf.to_excel("~/ski/elo/knapsack/fantasydf_spec.xlsx")
