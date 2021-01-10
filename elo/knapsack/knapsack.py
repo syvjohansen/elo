@@ -21,7 +21,7 @@ df = API_df.filter(items=["gender","is_team", "name", "athlete_id", "active","ra
 df = df[(df.active == True) & (df.is_team == False) & (df.score > 0)]
 df = df.reset_index(drop=True)
 
-df = pd.read_pickle("~/ski/elo/knapsack/fantasydf_spec.pkl")
+df = pd.read_pickle("~/ski/elo/knapsack/fantasydf_pursuit.pkl")
 #print(df)#, drop=True)
 df = df.reset_index(drop=True)
 
