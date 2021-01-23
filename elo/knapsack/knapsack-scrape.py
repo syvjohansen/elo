@@ -60,7 +60,7 @@ def fis_relay():
 
 
 def fis():
-	ds = []
+	ids = []
 	sex = []
 	count = 0
 	#start with the men
@@ -244,32 +244,7 @@ def fantasy(startlist):
 	fantasy_df = pd.DataFrame(data=d)
 	return fantasy_df
 
-def pursuit(fantasydf):
-	stage = [50, 46, 43, 40, 37, 34, 32, 30, 28, 26, 24, 22, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-	wc = [100, 80, 60, 50, 45, 40, 36, 32, 29, 26, 24, 2, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-	tour = [400, 320, 240, 200, 180, 160, 144, 128, 116, 104, 96, 88, 80, 72, 64, 60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20,20, 20, 20, 20]
 
-	mendf = fantasydf.loc[fantasydf['sex']=='m']
-	mendf = mendf.sort_values(by='elo', ascending=False)
-	mendf['pursuit'] = np.arange(1, len(mendf['name'])+1, 1)
-	mendf['pursuit'] = .3*mendf['pursuit'] + .7*mendf['place']
-	mendf = mendf.sort_values(by='pursuit', ascending=True)
-	mendf['pursuit'] = np.arange(1, len(mendf['name'])+1, 1)
-	mendf = mendf[:30]
-	mendf['points'] = tour
-
-	ladiesdf = fantasydf.loc[fantasydf['sex']=='f']
-	ladiesdf = ladiesdf.sort_values(by='elo', ascending=False)
-	ladiesdf['pursuit'] = np.arange(1,len(ladiesdf['name'])+1,1)
-	ladiesdf['pursuit'] = .3*ladiesdf['pursuit'] + .7*ladiesdf['place']
-	ladiesdf = ladiesdf.sort_values(by='pursuit', ascending=True)
-	ladiesdf['pursuit'] = np.arange(1,len(ladiesdf['name'])+1,1)
-	ladiesdf = ladiesdf[:30]
-	ladiesdf['points'] = tour
-
-	fantasydf = mendf
-	fantasydf = fantasydf.append(ladiesdf)
-	return fantasydf
 
 def elo_relay(fantasydf):
 	wc = [100, 80, 60, 50, 45, 40, 36, 32, 29, 26, 24, 2, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
@@ -352,7 +327,32 @@ def elo_relay(fantasydf):
 	return fantasydf
 
 	
+def pursuit(fantasydf):
+	stage = [50, 46, 43, 40, 37, 34, 32, 30, 28, 26, 24, 22, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+	wc = [100, 80, 60, 50, 45, 40, 36, 32, 29, 26, 24, 2, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+	tour = [400, 320, 240, 200, 180, 160, 144, 128, 116, 104, 96, 88, 80, 72, 64, 60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20,20, 20, 20, 20]
 
+	mendf = fantasydf.loc[fantasydf['sex']=='m']
+	mendf = mendf.sort_values(by='elo', ascending=False)
+	mendf['pursuit'] = np.arange(1, len(mendf['name'])+1, 1)
+	mendf['pursuit'] = .3*mendf['pursuit'] + .7*mendf['place']
+	mendf = mendf.sort_values(by='pursuit', ascending=True)
+	mendf['pursuit'] = np.arange(1, len(mendf['name'])+1, 1)
+	mendf = mendf[:30]
+	mendf['points'] = tour
+
+	ladiesdf = fantasydf.loc[fantasydf['sex']=='f']
+	ladiesdf = ladiesdf.sort_values(by='elo', ascending=False)
+	ladiesdf['pursuit'] = np.arange(1,len(ladiesdf['name'])+1,1)
+	ladiesdf['pursuit'] = .3*ladiesdf['pursuit'] + .7*ladiesdf['place']
+	ladiesdf = ladiesdf.sort_values(by='pursuit', ascending=True)
+	ladiesdf['pursuit'] = np.arange(1,len(ladiesdf['name'])+1,1)
+	ladiesdf = ladiesdf[:30]
+	ladiesdf['points'] = tour
+
+	fantasydf = mendf
+	fantasydf = fantasydf.append(ladiesdf)
+	return fantasydf
 
 def elo(fantasydf):
 	stage = [50, 46, 43, 40, 37, 34, 32, 30, 28, 26, 24, 22, 20, 18, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
@@ -360,8 +360,8 @@ def elo(fantasydf):
 	tour = [400, 320, 240, 200, 180, 160, 144, 128, 116, 104, 96, 88, 80, 72, 64, 60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20,20, 20, 20, 20]
 	skier_elo = []
 
-	df = pd.read_pickle("~/ski/elo/python/ski/men/varmen_all.pkl")
-	ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies_all.pkl")
+	df = pd.read_pickle("~/ski/elo/python/ski/men/varmen_distance.pkl")
+	ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladies/varladies_distance.pkl")
 	df = df.append(ladiesdf, ignore_index = True)
 	df['name'] = df['name'].str.replace('ø', 'oe')
 	df['name'] = df['name'].str.replace('ä', 'ae')
@@ -428,16 +428,16 @@ def elo(fantasydf):
 	#WebDriverWait(driver, 30).until(EC.invisibility_of_element_located((By.XPATH,
 	#	"//div[@class='js-off-canvas-overlay is-overlay-fixed']")))
 
-#startlist = fis()
-startlist = fis_relay()
+startlist = fis()
+#startlist = fis_relay()
 #print(startlist)
-#fantasydf = (fantasy(startlist))
-fantasydf = fantasy_relay(startlist)
+fantasydf = (fantasy(startlist))
+#fantasydf = fantasy_relay(startlist)
 #print(fantasydf)
 
-#fantasydf = elo(fantasydf)
+fantasydf = elo(fantasydf)
 #fantasydf = pursuit(fantasydf)
-fantasydf = elo_relay(fantasydf)
+#fantasydf = elo_relay(fantasydf)
 #print(fantasydf)
 
 fantasydf.to_pickle("~/ski/elo/knapsack/fantasydf_distance.pkl")
