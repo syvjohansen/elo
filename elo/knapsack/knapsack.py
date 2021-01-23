@@ -21,7 +21,7 @@ df = API_df.filter(items=["gender","is_team", "name", "athlete_id", "active","ra
 df = df[(df.active == True) & (df.is_team == False) & (df.score > 0)]
 df = df.reset_index(drop=True)
 
-df = pd.read_pickle("~/ski/elo/knapsack/fantasydf_pursuit.pkl")
+df = pd.read_pickle("~/ski/elo/knapsack/fantasydf_distance.pkl")
 #print(df)#, drop=True)
 df = df.reset_index(drop=True)
 
@@ -57,7 +57,7 @@ def knapsack(data):
   
   ## Amount Constraint (16 selections):
   constraint_expr = [x[j] for j in range(data.shape[0])]
-  solver.Add(sum(constraint_expr) <= 16)
+  solver.Add(sum(constraint_expr) <= 12)
 
   men, women = [], []
   for j in range(data.shape[0]):
@@ -70,8 +70,8 @@ def knapsack(data):
       return None
   
   ## Composition Constraint (8 men & 8 women):
-  solver.Add(sum(men) == 8)
-  solver.Add(sum(women) == 8)
+  solver.Add(sum(men) == 6)
+  solver.Add(sum(women) == 6)
 
   ## Objective:
   objective = solver.Objective()

@@ -11,7 +11,7 @@ ladiesdf = pd.read_pickle("~/ski/elo/python/biathlon/ladies/ladiesdf.pkl")
 #print(ladiesdf)
 update_ladiesdf = pd.read_pickle("~/ski/elo/python/biathlon/ladies/ladiesupdate_setup.pkl")
 ladiesdf = ladiesdf.append(update_ladiesdf, ignore_index=True)
-
+pd.options.mode.chained_assignment = None
 
 
 
@@ -222,10 +222,10 @@ def male_elo(ladiesdf, base_elo=1300, K=1, discount=.85):
 
 varladiesdf = ladiesdf
 
-varladiesdf = discipline(varladiesdf, "indiv")
+#varladiesdf = discipline(varladiesdf, "indiv")
 #varladiesdf = season(varladiesdf, 0, 9999)
 varladieselo = male_elo(varladiesdf)
-varladieselo.to_pickle("~/ski/elo/python/biathlon/ladies/varladies_indiv.pkl")
-varladieselo.to_excel("~/ski/elo/python/biathlon/ladies/varladies_indiv.xlsx")
+varladieselo.to_pickle("~/ski/elo/python/biathlon/ladies/varladies_all.pkl")
+varladieselo.to_excel("~/ski/elo/python/biathlon/ladies/varladies_all.xlsx")
 print(time.time() - start_time)
 
