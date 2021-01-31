@@ -1,4 +1,6 @@
 import pandas as pd
+import time
+start_time = time.time()
 
 xlsx = pd.ExcelFile('~/ski/elo/excel365/all.xlsx')
 
@@ -8,7 +10,7 @@ xlsx = pd.ExcelFile('~/ski/elo/excel365/all.xlsx')
 def ladies_setup():
 	#Step 1 is to read the sheet and assign column names
 	ladiesdf = pd.read_excel(xlsx, sheet_name="Ladies", header=None)
-	ladiesdf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 'discipline', 'place', 'name', 'nation', 'id']
+	ladiesdf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance','ms', 'discipline', 'place', 'name', 'nation', 'id']
 	lady_seasons = []
 
 	#This is to get rid of the space before the nations
@@ -57,22 +59,24 @@ def ladies_setup():
 		#Else it is the same race
 		else:
 			ladies_race.append(race)
+	ladiesdf['id'] = ladiesdf['id'].str.split("&")
+	ladiesdf['id'] = ladiesdf['id'].str[0]
+	ladiesdf['id'] = ladiesdf['id'].astype(int)
 
-
-	ladiesdf['name'][24330] = "Tatjana Kuznetsova2"
+	#ladiesdf['name'][24330] = "Tatjana Kuznetsova2"
 
 	
 
 
-	ladiesdf.loc[(ladiesdf['name']=="Lilia Vasilieva") & (ladiesdf['season']>2010), 
-	"name"] = "Lilia Vasilieva2"
+	#ladiesdf.loc[(ladiesdf['name']=="Lilia Vasilieva") & (ladiesdf['season']>2010), 
+	#"name"] = "Lilia Vasilieva2"
 
 	ladiesdf['race'] = ladies_race
 	return ladiesdf
 
 def men_setup():
 	mendf = pd.read_excel(xlsx, sheet_name="Men", header=None)
-	mendf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 'discipline', 'place', 'name', 'nation', 'id']
+	mendf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 'ms', 'discipline', 'place', 'name', 'nation', 'id']
 	mendf['nation'] = mendf['nation'].str.lstrip()
 
 	male_seasons = []
@@ -111,15 +115,16 @@ def men_setup():
 				men_race.append(race)
 		else:
 			men_race.append(race)
+	
 	#print(mendf.loc[[2072]])
 
-	mendf['name'][2072] = "Oddmund Jensen2"
-	mendf.loc[(mendf['name']=="David Rees") & (mendf['nation'] =="Canada"), "name"] = "David Rees2"
+	#mendf['name'][2072] = "Oddmund Jensen2"
+	#mendf.loc[(mendf['name']=="David Rees") & (mendf['nation'] =="Canada"), "name"] = "David Rees2"
 	#print(mendf.loc[mendf['name']=="David Rees2"])
-	mendf.loc[(mendf['name']=="Gunnar Eriksson") & (mendf['nation']=="Sweden") , "name"] = "Gunnar Eriksson2"
+	#mendf.loc[(mendf['name']=="Gunnar Eriksson") & (mendf['nation']=="Sweden") , "name"] = "Gunnar Eriksson2"
 	#print(mendf.loc[mendf['nation']=="Finland"])
-	mendf.loc[(mendf['name']=="Alexander Schwarz") & (mendf['nation']=='Finland'), "name"] = "Alexander Schwarz2"
-	mendf.loc[(mendf['name']=="Peter Klofutar") & (mendf['season']>1989), "name"] = "Peter Klofutar2"
+	#mendf.loc[(mendf['name']=="Alexander Schwarz") & (mendf['nation']=='Finland'), "name"] = "Alexander Schwarz2"
+	#mendf.loc[(mendf['name']=="Peter Klofutar") & (mendf['season']>1989), "name"] = "Peter Klofutar2"
 
 	#mendf.loc[(mendf['name']=="Lilia Vasilieva") & (mendf['season']>2010), 
 	#"name"] = "Lilia Vasilieva2"
@@ -128,15 +133,15 @@ def men_setup():
 	return mendf
 
 ladiesdf = ladies_setup()
-ladiesdf.to_pickle("~/ski/elo/python/ski/ladiesdf.pkl")
-ladiesdf.to_excel("~/ski/elo/python/ski/ladiesdf.xlsx")
+ladiesdf.to_pickle("~/ski/elo/python/ski/ladies/ladiesdf.pkl")
+ladiesdf.to_excel("~/ski/elo/python/ski/ladies/ladiesdf.xlsx")
 
 
 
 mendf = men_setup()
-mendf.to_pickle("~/ski/elo/python/ski/mendf.pkl")
-mendf.to_excel("~/ski/elo/python/ski/mendf.xlsx")
+mendf.to_pickle("~/ski/elo/python/ski/men/mendf.pkl")
+mendf.to_excel("~/ski/elo/python/ski/men/mendf.xlsx")
 
-
+print(time.time() - start_time)
 
 

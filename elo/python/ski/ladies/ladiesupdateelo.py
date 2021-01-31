@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-
+import time
+start_time = time.time()
 K=1
 
 #1) Import update
@@ -9,7 +10,7 @@ refdf = pd.read_pickle("~/ski/elo/python/ski/ladies/ladieselodf2.pkl")
 	#print(refdf)
 
 refdf = refdf.loc[refdf['date']==20200500]
-
+pd.options.mode.chained_assignment = None
 
 def EA (pelos, index):
     players = len(pelos)
@@ -34,7 +35,7 @@ def setup():
 	#print(refdf)
 	xlsx = pd.ExcelFile("~/ski/elo/excel365/update_scrape.xlsx")
 	df = pd.read_excel(xlsx, sheet_name = "Ladies", header=None)
-	df.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 'discipline', 'place', 'name', 'nation', 'id']
+	df.columns = ['date', 'city', 'country', 'level', 'sex', 'distance','ms', 'discipline', 'place', 'name', 'nation', 'id']
 	df['nation'] = df['nation'].str.lstrip()
 	df['id'] = df['id'].str.split("&")
 	df['id'] = df['id'].str[0]
@@ -130,6 +131,6 @@ print(df)
 df.to_pickle("~/ski/elo/python/ski/ladies/ladiesupdate.pkl")
 df.to_excel("~/ski/elo/python/ski/ladies/ladiesupdate.xlsx")
 
-
+print(time.time() - start_time)
 
 

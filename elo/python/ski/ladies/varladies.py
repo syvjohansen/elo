@@ -47,7 +47,14 @@ def discipline(ladiesdf, discipline):
     else:
         ladiesdf = ladiesdf.loc[ladiesdf['discipline']!="P"]
         ladiesdf = ladiesdf.loc[ladiesdf['discipline']!="F"]
+        ladiesdf = ladiesdf.loc[ladiesdf['distance']!="Stage"]
     return ladiesdf
+
+def ms(ladies, ms):
+    if(ms==1):
+        ladiesdf = ladiesdf.loc[ladiesdf['ms']==1]
+    else:
+        ladiesdf = ladiesdf.loc[ladiesdf['ms']==0]
 
 def place(ladiesdf, place1, place2):
     ladiesdf = ladiesdf.loc[ladiesdf['place'] >= place1]
@@ -204,7 +211,7 @@ def male_elo(ladiesdf, base_elo=1300, K=1, discount=.85):
             endnation = endskier['nation'].iloc[-1]
             endpelo = id_dict[idd]
             endelo = endpelo*discount+base_elo*(1-discount)
-            endf = pd.DataFrame([[endseasondate, "Summer", "Break", "end", "L", 0, None, 0
+            endf = pd.DataFrame([[endseasondate, "Summer", "Break", "end", "L", 0, 0, None, 0
                 , endname, endnation, idd ,seasons[season], 0, endpelo, endelo]], columns = ladieselodf.columns)
             ladieselodf = ladieselodf.append(endf)
             id_dict[idd] = endelo
@@ -217,12 +224,13 @@ def male_elo(ladiesdf, base_elo=1300, K=1, discount=.85):
     return ladieselodf 
 
 varladiesdf = ladiesdf
-#varladiesdf = dates(varladiesdf, 0, 20210104)
-#varladiesdf = distance(varladiesdf, "4r094309")
-varladiesdf = discipline(varladiesdf, "P")
+#varladiesdf = dates(varladiesdf, 0, 20210128)
+varladiesdf = distance(varladiesdf, "Sprint")
+#varladiesdf = discipline(varladiesdf, "C")
+
 #varladiesdf = season(varladiesdf, 0, 9999)
 varladieselo = male_elo(varladiesdf)
-varladieselo.to_pickle("~/ski/elo/python/ski/ladies/varladies_spec.pkl")
-varladieselo.to_excel("~/ski/elo/python/ski/ladies/varladies_spec.xlsx")
+varladieselo.to_pickle("~/ski/elo/python/ski/ladies/varladies_sprint.pkl")
+varladieselo.to_excel("~/ski/elo/python/ski/ladies/varladies_sprint.xlsx")
 print(time.time() - start_time)
 

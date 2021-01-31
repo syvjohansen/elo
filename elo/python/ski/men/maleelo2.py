@@ -1,8 +1,57 @@
 import pandas as pd
 import numpy as np
+import time
+start_time = time.time()
 
 K=1
 mendf = pd.read_pickle("~/ski/elo/python/ski/mendf.pkl")
+pd.options.mode.chained_assignment = None
+
+def calc_Evec(R_vector, basis = 10, difference = 400):
+    '''
+        compute the expected value of each athlete winning against all the other (n-1) athletes.
+        Input:
+            R_vector: the ELO rating of each athlete, an array of float values, [R1, R2, ... Rn]
+        Output:
+            E_vector: the expected value of each athlete winning against all the (n-1) athletes, an array of float values, [E1, E2, ... En]
+    '''
+    R_vector = np.array(R_vector)
+    n = R_vector.size
+    R_mat_col = np.tile(R_vector,(n,1))
+    R_mat_row = np.transpose(R_mat_col)
+
+    E_matrix = 1 / (1 + basis**((R_mat_row - R_mat_col) / difference)) 
+    np.fill_diagonal(E_matrix, 0)
+    E_vector = np.sum(E_matrix , axis=0)
+    return E_vector
+
+def calc_Svec(Place_vector):
+    '''
+        convert the race results (place vector) into actual value for each athlete.
+        Input:
+            Place_vector: the place of each athlete, an array of sorted integer values, [P1, P2, ... Pn] so that P1 <= P2 ... <= Pn
+        Output:
+            S_vector: the actual score of each athlete (winning, drawing, or losing) against the (n-1) athletes, an array of float values, [S1, S2, ... Sn]
+                win = 1
+                draw = 1 / 2
+                loss = 0 
+    '''
+    n, n_unique = len(Place_vector), len(set(Place_vector))
+    # If no draws: ex. [1, 2, ... Pn] -> [n-1, n-2, ... 0]
+    if n == n_unique:
+        S_vector = np.arange(n)[::-1]
+        return S_vector
+    # Else draws: ex. [1, 1, ... Pn]
+    else:
+        Place_vector, S_vector = np.array(Place_vector), list()
+        for p in Place_vector:
+            draws = np.count_nonzero(Place_vector == p) - 1
+            wins = (Place_vector > p).sum()
+            score = wins*1 + draws*0.5
+            S_vector.append(score)
+        return np.array(S_vector)
+
+    
 
 def EA (pelos, index):
     players = len(pelos)
@@ -21,66 +70,75 @@ def SA(place_vector, place):
     wins = (place_vector > place).sum()
     return losses*[0] + draws*[0.5] + wins*[1]
 
-def male_elo():
-	#Step 1: Figure out the person's previous elo.  
-	#If they aren't in the new dataframe, make them a new score (1300)
-	menelodf = pd.DataFrame()
-	#menelodf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 
-	#'discipline', 'place', 'name', 'nation','season','race', 'pelo', 'elo']
 
-	id_pool = []
-	#Print the unique seasons
-	seasons = (pd.unique(mendf['season']))
-	for season in range(len(seasons)):
-	#for season in range(10):
-		print(seasons[season])
 
-		seasondf = mendf.loc[mendf['season']==seasons[season]]
-		races = pd.unique(seasondf['race'])
-		for race in range(len(races)):
-			pelo_list = []
-			elo_list = []
-			racedf = seasondf.loc[seasondf['race']==races[race]]
-			racedf.reset_index(inplace=True, drop=True)
-			for a in range(len(racedf['id'])):
-				if (racedf['id'][a] not in id_pool):
-					id_pool.append(racedf['id'][a])
-					pelo_list.append(1300)
-				else:
-					#print("yo")
-					#Get the vet skiers line
-					vetskier = menelodf.loc[menelodf['id']==racedf['id'][a]]
-					pelo_list.append(vetskier['elo'].iloc[-1])
 
-				#else we have to find them and see if they are the same person
-				#else we have to find their last elo in menelodf
+def male_elo(mendf, base_elo=1300, K=1, discount=.85):
+    #Step 1: Figure out the person's previous elo.  
+    #If they aren't in the new dataframe, make them a new score (1300)
+    menelodf = pd.DataFrame()
+    #menelodf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 
+    #'discipline', 'place', 'name', 'nation','season','race', 'pelo', 'elo']
+    id_dict_list = list(pd.unique(mendf['id']))
+    v = 1300
+    id_dict = {k:1300 for k in id_dict_list}
+   # print(id_dict)
 
-			racedf['pelo'] = pelo_list
-			PLACES = list(racedf['place'])
-			for i,p in enumerate(PLACES):
-				elo_list.append(pelo_list[i] + K*(sum(SA(PLACES, PLACES[i])) - sum(EA(pelo_list,i))))
+    id_pool = []
+    max_races = max(mendf['race'])
+    #Print the unique seasons
+    seasons = (pd.unique(mendf['season']))
+    #print(seasons)
+    for season in range(len(seasons)):
+    #for season in range(10):
+        print(seasons[season])
 
-			racedf['elo'] = elo_list
-			menelodf = menelodf.append(racedf)
-			#print(menelodf)
+        seasondf = mendf.loc[mendf['season']==seasons[season]]
+        races = pd.unique(seasondf['race'])
+        #K = float(38/len(races))
+        K=1
 
-		endseasondate = int(str(seasons[season])+'0500')
-		#print(endseasondate)
-		for n in range(len(id_pool)):
-			endskier = menelodf.loc[menelodf['id']==id_pool[n]]
-			endname = endskier['name'].iloc[-1]
-			endpelo = endskier['elo'].iloc[-1]
-			endelo = endpelo*.85+1300*.15
-			endnation = endskier['nation'].iloc[-1]
-			endf = pd.DataFrame([[endseasondate, "Summer", "Break", "end", "M", 0, None, 0
-				, endname, endnation, id_pool[n],seasons[season], 0, endpelo, endelo]], columns = menelodf.columns)
-			menelodf = menelodf.append(endf)
+        for race in range(len(races)):
+            racedf = seasondf.loc[seasondf['race']==races[race]]
+            ski_ids_r = list(racedf['id'])
+            pelo_list = [id_dict[idd] for idd in ski_ids_r]
+            places_list = racedf['place']
+           # print(places_list)
+            racedf['pelo'] = pelo_list
+            E = calc_Evec(pelo_list)
+            S = calc_Svec(places_list)
+           # print(S)
 
-	return menelodf	
+            elo_list = np.array(pelo_list) + K * (S-E)
+            
+            racedf['elo'] = elo_list
+            menelodf = menelodf.append(racedf)
 
-menelodf = male_elo()
+            for i, idd in enumerate(ski_ids_r):
+                id_dict[idd] = elo_list[i]
+        ski_ids_s = list(pd.unique(seasondf["id"]))
+        endseasondate = int(str(seasons[season])+'0500')
+        for idd in ski_ids_s:
+            endskier = seasondf.loc[seasondf['id']==idd]
+            endname = endskier['name'].iloc[-1]
+            endnation = endskier['nation'].iloc[-1]
+            endpelo = id_dict[idd]
+            endelo = endpelo*discount+base_elo*(1-discount)
+            endf = pd.DataFrame([[endseasondate, "Summer", "Break", "end", "M", 0, 0, None, 0
+                , endname, endnation, idd ,seasons[season], 0, endpelo, endelo]], columns = menelodf.columns)
+            menelodf = menelodf.append(endf)
+            id_dict[idd] = endelo
+
+           
+            #print(menelodf)
+
+        
+
+    return menelodf 
+
+menelodf = male_elo(mendf)
 menelodf.to_pickle("~/ski/elo/python/ski/menelodf2.pkl") #changed
 menelodf.to_excel("~/ski/elo/python/ski/menelodf2.xlsx") #changed
 
-
+print(time.time() - start_time)
 #def male_elo():

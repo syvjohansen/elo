@@ -8,9 +8,10 @@ start_time = time.time()
 
 
 mendf = pd.read_pickle("~/ski/elo/python/ski/men/mendf.pkl")
+
 update_mendf = pd.read_pickle("~/ski/elo/python/ski/men/menupdate_setup.pkl")
 mendf = mendf.append(update_mendf, ignore_index=True)
-
+#print(mendf)
 pd.options.mode.chained_assignment = None
 
 
@@ -30,7 +31,7 @@ def country(mendf, countries):
     return mendf
 
 def distance(mendf, distances):
-    print(pd.unique(mendf['distance']))
+   # print(pd.unique(mendf['distance']))
     if(distances=="Sprint"):
         mendf = mendf.loc[mendf['distance']=="Sprint"]
     elif(distances in pd.unique(mendf['distance'])):
@@ -48,6 +49,17 @@ def discipline(mendf, discipline):
     else:
         mendf = mendf.loc[mendf['discipline']!="P"]
         mendf = mendf.loc[mendf['discipline']!="F"]
+        mendf = mendf.loc[mendf['distance']!="Stage"]
+    return mendf
+
+def ms(mendf, ms):
+    
+    if(ms=="1"):
+        print("yo")
+        mendf = mendf.loc[mendf['ms']==1]
+        print(mendf)
+    else:
+        mendf = mendf.loc[mendf['ms']==0]
     return mendf
 
 def place(mendf, place1, place2):
@@ -205,7 +217,7 @@ def male_elo(mendf, base_elo=1300, K=1, discount=.85):
             endnation = endskier['nation'].iloc[-1]
             endpelo = id_dict[idd]
             endelo = endpelo*discount+base_elo*(1-discount)
-            endf = pd.DataFrame([[endseasondate, "Summer", "Break", "end", "M", 0, None, 0
+            endf = pd.DataFrame([[endseasondate, "Summer", "Break", "end", "M", 0, 0, None, 0
                 , endname, endnation, idd ,seasons[season], 0, endpelo, endelo]], columns = menelodf.columns)
             menelodf = menelodf.append(endf)
             id_dict[idd] = endelo
@@ -218,12 +230,14 @@ def male_elo(mendf, base_elo=1300, K=1, discount=.85):
     return menelodf 
 
 varmendf = mendf
-#varmendf = dates(varmendf, 0, 20210104)
-#varmendf = distance(varmendf, "dsfi")
-varmendf = discipline(varmendf, "P")
+
+#varmendf = dates(varmendf, 0, 20210128)
+varmendf = distance(varmendf, "Sprint")
+#varmendf = discipline(varmendf, "C")
+#varmendf = ms(varmendf, "1")
 #varmendf = season(varmendf, 0, 9999)
 varmenelo = male_elo(varmendf)
-varmenelo.to_pickle("~/ski/elo/python/ski/men/varmen_spec.pkl")
-varmenelo.to_excel("~/ski/elo/python/ski/men/varmen_spec.xlsx")
+varmenelo.to_pickle("~/ski/elo/python/ski/men/varmen_sprint.pkl")
+varmenelo.to_excel("~/ski/elo/python/ski/men/varmen_sprint.xlsx")
 print(time.time() - start_time)
 

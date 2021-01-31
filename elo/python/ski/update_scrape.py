@@ -9,6 +9,8 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import xlsxwriter
 import requests
+import time
+start_time = time.time()
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
 }
@@ -101,6 +103,11 @@ def get_table(worldcup_page):
 	country = body[7].text.strip()
 
 	distance = body[3].text.split(" ")
+	if(("Mass" in distance) and ("Start" in distance)):
+		ms=1
+	else:
+		ms=0
+
 	distance = distance[0]
 	if(distance.startswith("4x") or distance.startswith("3x")):
 		distance = "Rel"
@@ -108,24 +115,24 @@ def get_table(worldcup_page):
 		distance = "Ts"
 	if(distance=="Duathlon"):
 		technique = "P"
-		table = [date, city, country, distance, technique]
+		table = [date, city, country, distance, 1, technique]
 		return table
 	if(distance=="Sprint"):
 			technique = body[3].text.split(" ")
 			technique = technique[1]
-			table = [date, city, country, distance, technique]
+			table = [date, city, country, distance, ms, technique]
 			return table
 	if(int(year)>1985 and distance!="Rel"):
 		try:
 			technique = body[3].text.split(" ")
 			technique = technique[2]
-			table = [date, city, country, distance, technique]
+			table = [date, city, country, distance, ms, technique]
 			return table
 		except:
-			table = [date, city, country, distance, "N/A"]
+			table = [date, city, country, distance, ms, "N/A"]
 			return table
 	else:
-		table = [date, city, country, distance, "N/A"]
+		table = [date, city, country, distance, ms, "N/A"]
 		return table
 	#return worldcup_date
 def get_skier(worldcup_page, distance):
@@ -272,14 +279,15 @@ def get_worldcup():
 		category = "all"
 		sex = "M"
 		distance = table[3]
-		technique = table[4]
+		ms = table[4]
+		technique = table[5]
 		
 		skiers = get_skier(men_worldcup_page1[a], distance)
 		places = skiers[0]
 		ski = skiers[1]
 		nation = skiers[2]
 		ski_ids = skiers[3]
-		menwc = [date, city, country, category, sex, distance, technique, places, ski, nation, ski_ids]
+		menwc = [date, city, country, category, sex, distance, ms, technique, places, ski, nation, ski_ids]
 		if(distance!="Rel" and distance!="Ts"):
 			men_worldcup.append(menwc)
 
@@ -293,14 +301,15 @@ def get_worldcup():
 		category = "all"
 		sex = "L"
 		distance = table[3]
-		technique = table[4]
+		ms = table[4]
+		technique = table[5]
 		
 		skiers = get_skier(ladies_worldcup_page1[a], distance)
 		places = skiers[0]
 		ski = skiers[1]
 		nation = skiers[2]
 		ski_ids = skiers[3]
-		ladieswc = [date, city, country, category, sex, distance, technique, places, ski, nation, ski_ids]
+		ladieswc = [date, city, country, category, sex, distance, ms, technique, places, ski, nation, ski_ids]
 		if(distance!="Rel" and distance!="Ts"):
 			ladies_worldcup.append(ladieswc)
 
@@ -329,7 +338,7 @@ for g in range(len(worldcup)):
 		row = 0
 		col = 0
 		for a in range(len(worldcup[g])):
-			for b in range(len(worldcup[g][a][7])):
+			for b in range(len(worldcup[g][a][8])):
 				ladies.write(row, col, worldcup[g][a][0])
 				ladies.write(row, col+1, worldcup[g][a][1])
 				ladies.write(row, col+2, worldcup[g][a][2])
@@ -337,20 +346,21 @@ for g in range(len(worldcup)):
 				ladies.write(row, col+4, worldcup[g][a][4])
 				ladies.write(row, col+5, worldcup[g][a][5])
 				ladies.write(row, col+6, worldcup[g][a][6])
-				ladies.write(row, col+7, worldcup[g][a][7][b])
+				ladies.write(row, col+7, worldcup[g][a][7])
+				ladies.write(row, col+8, worldcup[g][a][8][b])
 				#print(worldcup[g][a][0])
 				#print(worldcup[g][a][7][b])
-				ladies.write(row, col+8, worldcup[g][a][8][b])
-				#print(worldcup[g][a][8][b])
 				ladies.write(row, col+9, worldcup[g][a][9][b])
+				#print(worldcup[g][a][8][b])
 				ladies.write(row, col+10, worldcup[g][a][10][b])
+				ladies.write(row, col+11, worldcup[g][a][11][b])
 				#print(worldcup[g][a][9][b])
 				row+=1
 	else:
 		row = 0
 		col = 0
 		for a in range(len(worldcup[g])):
-			for b in range(len(worldcup[g][a][7])):
+			for b in range(len(worldcup[g][a][8])):
 				men.write(row, col, worldcup[g][a][0])
 				men.write(row, col+1, worldcup[g][a][1])
 				men.write(row, col+2, worldcup[g][a][2])
@@ -358,16 +368,17 @@ for g in range(len(worldcup)):
 				men.write(row, col+4, worldcup[g][a][4])
 				men.write(row, col+5, worldcup[g][a][5])
 				men.write(row, col+6, worldcup[g][a][6])
-				men.write(row, col+7, worldcup[g][a][7][b])
+				men.write(row, col+7, worldcup[g][a][7])
 				men.write(row, col+8, worldcup[g][a][8][b])
 				men.write(row, col+9, worldcup[g][a][9][b])
 				men.write(row, col+10, worldcup[g][a][10][b])
+				men.write(row, col+11, worldcup[g][a][11][b])
 				row+=1
 
 
 workbook.close()
 
-
+print(time.time() - start_time)
 
 
 
