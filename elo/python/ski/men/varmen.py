@@ -57,7 +57,7 @@ def ms(mendf, ms):
     if(ms=="1"):
         print("yo")
         mendf = mendf.loc[mendf['ms']==1]
-        print(mendf)
+       # print(mendf)
     else:
         mendf = mendf.loc[mendf['ms']==0]
     return mendf
@@ -163,33 +163,47 @@ def SA(place_vector, place):
     wins = (place_vector > place).sum()
     return losses*[0] + draws*[0.5] + wins*[1]
 
+def k_finder(men, varmendf, season):
+    max_races = max(mendf['race'])
+    seasondf = mendf.loc[mendf['season']==season]
+    max_season_races = max(seasondf['race'])
+    #print(max_season_races)
+    varseasondf = varmendf.loc[varmendf['season']==season]
+    varraces = len(pd.unique(varseasondf['race']))
+
+    k = min(float(max_season_races/2), float(max_season_races/varraces))
+    #k = float(max_season_races/varraces)
+    return k
 
 
 
-def male_elo(mendf, base_elo=1300, K=1, discount=.85):
+def male_elo(varmendf, base_elo=1300, K=1, discount=.85):
     #Step 1: Figure out the person's previous elo.  
     #If they aren't in the new dataframe, make them a new score (1300)
     menelodf = pd.DataFrame()
     #menelodf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 
     #'discipline', 'place', 'name', 'nation','season','race', 'pelo', 'elo']
-    id_dict_list = list(pd.unique(mendf['id']))
+    id_dict_list = list(pd.unique(varmendf['id']))
     v = 1300
     id_dict = {k:1300 for k in id_dict_list}
    # print(id_dict)
 
     id_pool = []
-    max_races = max(mendf['race'])
+    max_races = max(varmendf['race'])
     #Print the unique seasons
-    seasons = (pd.unique(mendf['season']))
+    seasons = (pd.unique(varmendf['season']))
     #print(seasons)
     for season in range(len(seasons)):
+       # K = k_finder(mendf, varmendf, seasons[season])
+        #print(K)
+
     #for season in range(10):
         print(seasons[season])
 
-        seasondf = mendf.loc[mendf['season']==seasons[season]]
+        seasondf = varmendf.loc[varmendf['season']==seasons[season]]
         races = pd.unique(seasondf['race'])
         #K = float(38/len(races))
-        K=1
+        
 
         for race in range(len(races)):
             racedf = seasondf.loc[seasondf['race']==races[race]]
@@ -232,12 +246,12 @@ def male_elo(mendf, base_elo=1300, K=1, discount=.85):
 varmendf = mendf
 
 #varmendf = dates(varmendf, 0, 20210128)
-varmendf = distance(varmendf, "Sprint")
-#varmendf = discipline(varmendf, "C")
-#varmendf = ms(varmendf, "1")
+varmendf = distance(varmendf, "15")
+varmendf = discipline(varmendf, "C")
+varmendf = ms(varmendf, "1")
 #varmendf = season(varmendf, 0, 9999)
 varmenelo = male_elo(varmendf)
-varmenelo.to_pickle("~/ski/elo/python/ski/men/varmen_sprint.pkl")
-varmenelo.to_excel("~/ski/elo/python/ski/men/varmen_sprint.xlsx")
+varmenelo.to_pickle("~/ski/elo/python/ski/men/varmen_distance_ms.pkl")
+varmenelo.to_excel("~/ski/elo/python/ski/men/varmen_distance_ms.xlsx")
 print(time.time() - start_time)
 

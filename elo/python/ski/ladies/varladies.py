@@ -158,32 +158,46 @@ def SA(place_vector, place):
     return losses*[0] + draws*[0.5] + wins*[1]
 
 
+def k_finder(ladiesdf, varladiesdf, season):
+    max_races = max(ladiesdf['race'])
+    seasondf = ladiesdf.loc[ladiesdf['season']==season]
+    max_season_races = max(seasondf['race'])
+    #print(max_season_races)
+    varseasondf = varladiesdf.loc[varladiesdf['season']==season]
+    varraces = len(pd.unique(varseasondf['race']))
+
+    k = float(max_season_races/varraces)
+    return k
 
 
-def male_elo(ladiesdf, base_elo=1300, K=1, discount=.85):
+
+def male_elo(varladiesdf, base_elo=1300, K=1, discount=.85):
     #Step 1: Figure out the person's previous elo.  
     #If they aren't in the new dataframe, make them a new score (1300)
     ladieselodf = pd.DataFrame()
     #ladieselodf.columns = ['date', 'city', 'country', 'level', 'sex', 'distance', 
     #'discipline', 'place', 'name', 'nation','season','race', 'pelo', 'elo']
-    id_dict_list = list(pd.unique(ladiesdf['id']))
+    id_dict_list = list(pd.unique(varladiesdf['id']))
     v = 1300
     id_dict = {k:1300 for k in id_dict_list}
    # print(id_dict)
 
     id_pool = []
-    max_races = max(ladiesdf['race'])
+    max_races = max(varladiesdf['race'])
     #Print the unique seasons
-    seasons = (pd.unique(ladiesdf['season']))
+    seasons = (pd.unique(varladiesdf['season']))
     #print(seasons)
     for season in range(len(seasons)):
+        K = k_finder(ladiesdf, varladiesdf, seasons[season])
+        
     #for season in range(10):
         print(seasons[season])
 
-        seasondf = ladiesdf.loc[ladiesdf['season']==seasons[season]]
+        seasondf = varladiesdf.loc[varladiesdf['season']==seasons[season]]
         races = pd.unique(seasondf['race'])
+
         #K = float(38/len(races))
-        K=1
+       # K=1
 
         for race in range(len(races)):
             racedf = seasondf.loc[seasondf['race']==races[race]]
@@ -226,11 +240,11 @@ def male_elo(ladiesdf, base_elo=1300, K=1, discount=.85):
 varladiesdf = ladiesdf
 #varladiesdf = dates(varladiesdf, 0, 20210128)
 varladiesdf = distance(varladiesdf, "Sprint")
-#varladiesdf = discipline(varladiesdf, "C")
-
+varladiesdf = discipline(varladiesdf, "C")
+#varladiesdf = ms(varladiesdf, "1")
 #varladiesdf = season(varladiesdf, 0, 9999)
 varladieselo = male_elo(varladiesdf)
-varladieselo.to_pickle("~/ski/elo/python/ski/ladies/varladies_sprint.pkl")
-varladieselo.to_excel("~/ski/elo/python/ski/ladies/varladies_sprint.xlsx")
+varladieselo.to_pickle("~/ski/elo/python/ski/ladies/varladies_sprint_c.pkl")
+varladieselo.to_excel("~/ski/elo/python/ski/ladies/varladies_sprint_c.xlsx")
 print(time.time() - start_time)
 
