@@ -155,7 +155,17 @@ def SA(place_vector, place):
     return losses*[0] + draws*[0.5] + wins*[1]
 
 
+def k_finder(ladiesdf, varladiesdf, season):
+    max_races = max(ladiesdf['race'])
+    seasondf = ladiesdf.loc[ladiesdf['season']==season]
+    max_season_races = max(seasondf['race'])
+    #print(max_season_races)
+    varseasondf = varladiesdf.loc[varladiesdf['season']==season]
+    varraces = len(pd.unique(varseasondf['race']))
 
+    #k = max(1,min(float(max_season_races/2), float(max_season_races/varraces)))
+    k = float(max_races/max_season_races)
+    return k
 
 def male_elo(ladiesdf, base_elo=1300, K=1, discount=.85):
     #Step 1: Figure out the person's previous elo.  
@@ -176,11 +186,12 @@ def male_elo(ladiesdf, base_elo=1300, K=1, discount=.85):
     for season in range(len(seasons)):
     #for season in range(10):
         print(seasons[season])
+        K = k_finder(ladiesdf, varladiesdf, seasons[season])
 
         seasondf = ladiesdf.loc[ladiesdf['season']==seasons[season]]
         races = pd.unique(seasondf['race'])
         #K = float(38/len(races))
-        K=1
+       
 
         for race in range(len(races)):
             racedf = seasondf.loc[seasondf['race']==races[race]]
@@ -221,11 +232,12 @@ def male_elo(ladiesdf, base_elo=1300, K=1, discount=.85):
     return ladieselodf 
 
 varladiesdf = ladiesdf
-
-#varladiesdf = discipline(varladiesdf, "indiv")
+#varladiesdf = dates(varladiesdf, 0, 20210212)
+#varladiesdf = distance(varladiesdf, "Individual")
+#varladiesdf = discipline(varladiesdf, "Mass")
 #varladiesdf = season(varladiesdf, 0, 9999)
 varladieselo = male_elo(varladiesdf)
-varladieselo.to_pickle("~/ski/elo/python/biathlon/ladies/varladies_all.pkl")
-varladieselo.to_excel("~/ski/elo/python/biathlon/ladies/varladies_all.xlsx")
+varladieselo.to_pickle("~/ski/elo/python/biathlon/ladies/varladies_all_k.pkl")
+varladieselo.to_excel("~/ski/elo/python/biathlon/ladies/varladies_all_k.xlsx")
 print(time.time() - start_time)
 

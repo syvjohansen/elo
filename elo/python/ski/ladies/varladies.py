@@ -7,8 +7,8 @@ import time
 start_time = time.time()
 
 
-ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladies/ladiesdf.pkl")
-update_ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladies/ladiesupdate_setup.pkl")
+ladiesdf = pd.read_pickle("~/ski/elo/python/ski/excel365/ladiesdf.pkl")
+update_ladiesdf = pd.read_pickle("~/ski/elo/python/ski/excel365/ladiesupdate_setup.pkl")
 ladiesdf = ladiesdf.append(update_ladiesdf, ignore_index=True)
 
 
@@ -166,7 +166,7 @@ def k_finder(ladiesdf, varladiesdf, season):
     varseasondf = varladiesdf.loc[varladiesdf['season']==season]
     varraces = len(pd.unique(varseasondf['race']))
 
-    k = float(max_season_races/varraces)
+    k = max(1,min(float(max_season_races/2), float(max_season_races/varraces)))
     return k
 
 
@@ -188,7 +188,7 @@ def male_elo(varladiesdf, base_elo=1300, K=1, discount=.85):
     seasons = (pd.unique(varladiesdf['season']))
     #print(seasons)
     for season in range(len(seasons)):
-        K = k_finder(ladiesdf, varladiesdf, seasons[season])
+        #K = k_finder(ladiesdf, varladiesdf, seasons[season])
         
     #for season in range(10):
         print(seasons[season])
@@ -196,8 +196,7 @@ def male_elo(varladiesdf, base_elo=1300, K=1, discount=.85):
         seasondf = varladiesdf.loc[varladiesdf['season']==seasons[season]]
         races = pd.unique(seasondf['race'])
 
-        #K = float(38/len(races))
-       # K=1
+      
 
         for race in range(len(races)):
             racedf = seasondf.loc[seasondf['race']==races[race]]
@@ -240,11 +239,12 @@ def male_elo(varladiesdf, base_elo=1300, K=1, discount=.85):
 varladiesdf = ladiesdf
 #varladiesdf = dates(varladiesdf, 0, 20210128)
 varladiesdf = distance(varladiesdf, "Sprint")
+
 varladiesdf = discipline(varladiesdf, "C")
 #varladiesdf = ms(varladiesdf, "1")
 #varladiesdf = season(varladiesdf, 0, 9999)
 varladieselo = male_elo(varladiesdf)
-varladieselo.to_pickle("~/ski/elo/python/ski/ladies/varladies_sprint_c.pkl")
-varladieselo.to_excel("~/ski/elo/python/ski/ladies/varladies_sprint_c.xlsx")
+varladieselo.to_pickle("~/ski/elo/python/ski/excel365/varladies_sprint_classic.pkl")
+varladieselo.to_excel("~/ski/elo/python/ski/excel365/varladies_sprint_classic.xlsx")
 print(time.time() - start_time)
 

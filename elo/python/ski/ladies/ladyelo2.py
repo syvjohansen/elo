@@ -3,7 +3,7 @@ import numpy as np
 import time
 start_time = time.time()
 
-ladiesdf = pd.read_pickle("~/ski/elo/python/ski/ladiesdf.pkl")
+ladiesdf = pd.read_pickle("~/ski/elo/python/ski/excel365/ladiesdf.pkl")
 
 #mendf = pd.read_pickle("~/ski/elo/python/ski/mendf.pkl")
 pd.options.mode.chained_assignment = None
@@ -138,8 +138,8 @@ def lady_elo(ladiesdf, base_elo=1300, K=1, discount=.85):
 
 
 ladyelo2 = (lady_elo(ladiesdf))
-ladyelo2.to_pickle("~/ski/elo/python/ski/ladyelo2.pkl")
-ladyelo2.to_excel("~/ski/elo/python/ski/ladyelo2.xlsx")
+ladyelo2.to_pickle("~/ski/elo/python/ski/excel365/ladyelo2.pkl")
+ladyelo2.to_excel("~/ski/elo/python/ski/excel365/ladyelo2.xlsx")
 
 print(time.time() - start_time)
 

@@ -7,9 +7,9 @@ import time
 start_time = time.time()
 
 
-mendf = pd.read_pickle("~/ski/elo/python/ski/men/mendf.pkl")
+mendf = pd.read_pickle("~/ski/elo/python/ski/excel365/mendf.pkl")
 
-update_mendf = pd.read_pickle("~/ski/elo/python/ski/men/menupdate_setup.pkl")
+update_mendf = pd.read_pickle("~/ski/elo/python/ski/excel365/menupdate_setup.pkl")
 mendf = mendf.append(update_mendf, ignore_index=True)
 #print(mendf)
 pd.options.mode.chained_assignment = None
@@ -171,7 +171,7 @@ def k_finder(men, varmendf, season):
     varseasondf = varmendf.loc[varmendf['season']==season]
     varraces = len(pd.unique(varseasondf['race']))
 
-    k = min(float(max_season_races/2), float(max_season_races/varraces))
+    k = max(1,min(float(max_season_races/2), float(max_season_races/varraces)))
     #k = float(max_season_races/varraces)
     return k
 
@@ -194,15 +194,15 @@ def male_elo(varmendf, base_elo=1300, K=1, discount=.85):
     seasons = (pd.unique(varmendf['season']))
     #print(seasons)
     for season in range(len(seasons)):
-       # K = k_finder(mendf, varmendf, seasons[season])
+        #K = k_finder(mendf, varmendf, seasons[season])
         #print(K)
 
-    #for season in range(10):
+    
         print(seasons[season])
 
         seasondf = varmendf.loc[varmendf['season']==seasons[season]]
         races = pd.unique(seasondf['race'])
-        #K = float(38/len(races))
+        
         
 
         for race in range(len(races)):
@@ -246,12 +246,12 @@ def male_elo(varmendf, base_elo=1300, K=1, discount=.85):
 varmendf = mendf
 
 #varmendf = dates(varmendf, 0, 20210128)
-varmendf = distance(varmendf, "15")
+varmendf = distance(varmendf, "Sprint")
 varmendf = discipline(varmendf, "C")
-varmendf = ms(varmendf, "1")
+#varmendf = ms(varmendf, "1")
 #varmendf = season(varmendf, 0, 9999)
 varmenelo = male_elo(varmendf)
-varmenelo.to_pickle("~/ski/elo/python/ski/men/varmen_distance_ms.pkl")
-varmenelo.to_excel("~/ski/elo/python/ski/men/varmen_distance_ms.xlsx")
+varmenelo.to_pickle("~/ski/elo/python/ski/excel365/varmen_sprint_classic.pkl")
+varmenelo.to_excel("~/ski/elo/python/ski/excel365/varmen_sprint_classic.xlsx")
 print(time.time() - start_time)
 

@@ -2,7 +2,7 @@ import pandas as pd
 import time
 start_time = time.time()
 
-xlsx = pd.ExcelFile('~/ski/elo/excel365/all.xlsx')
+xlsx = pd.ExcelFile('~/ski/elo/python/ski/all.xlsx')
 
 
 #ladies_places = list(int(ladiesdf['place']))
@@ -133,14 +133,14 @@ def men_setup():
 	return mendf
 
 ladiesdf = ladies_setup()
-ladiesdf.to_pickle("~/ski/elo/python/ski/ladies/ladiesdf.pkl")
-ladiesdf.to_excel("~/ski/elo/python/ski/ladies/ladiesdf.xlsx")
+ladiesdf.to_pickle("~/ski/elo/python/ski/excel365/ladiesdf.pkl")
+ladiesdf.to_excel("~/ski/elo/python/ski/excel365/ladiesdf.xlsx")
 
 
 
 mendf = men_setup()
-mendf.to_pickle("~/ski/elo/python/ski/men/mendf.pkl")
-mendf.to_excel("~/ski/elo/python/ski/men/mendf.xlsx")
+mendf.to_pickle("~/ski/elo/python/ski/excel365/mendf.pkl")
+mendf.to_excel("~/ski/elo/python/ski/excel365/mendf.xlsx")
 
 print(time.time() - start_time)
 

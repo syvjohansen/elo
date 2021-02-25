@@ -325,7 +325,7 @@ def get_worldcup():
 #date, city, country, category, sex, distance, discipline, places, name
 worldcup = get_worldcup()
 
-workbook = xlsxwriter.Workbook("/Users/syverjohansen/ski/elo/excel365/update_scrape.xlsx")
+workbook = xlsxwriter.Workbook("/Users/syverjohansen/ski/elo/python/ski/excel365/update_scrape.xlsx")
 ladies = workbook.add_worksheet("Ladies")
 men = workbook.add_worksheet("Men")
 

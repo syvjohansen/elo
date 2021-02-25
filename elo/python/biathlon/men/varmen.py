@@ -155,6 +155,18 @@ def SA(place_vector, place):
     return losses*[0] + draws*[0.5] + wins*[1]
 
 
+def k_finder(men, varmendf, season):
+    max_races = max(mendf['race'])
+    seasondf = mendf.loc[mendf['season']==season]
+    max_season_races = max(seasondf['race'])
+    #print(max_season_races)
+    varseasondf = varmendf.loc[varmendf['season']==season]
+    varraces = len(pd.unique(varseasondf['race']))
+
+    #k = max(1,min(float(max_season_races/2), float(max_season_races/varraces)))
+    #k = float(max_season_races/varraces)
+    k = float(max_races/max_season_races)
+    return k
 
 
 def male_elo(mendf, base_elo=1300, K=1, discount=.85):
@@ -174,13 +186,14 @@ def male_elo(mendf, base_elo=1300, K=1, discount=.85):
     seasons = (pd.unique(mendf['season']))
     #print(seasons)
     for season in range(len(seasons)):
+        K = k_finder(mendf, varmendf, seasons[season])
     #for season in range(10):
         print(seasons[season])
 
         seasondf = mendf.loc[mendf['season']==seasons[season]]
         races = pd.unique(seasondf['race'])
         #K = float(38/len(races))
-        K=1
+        
 
         for race in range(len(races)):
             racedf = seasondf.loc[seasondf['race']==races[race]]
@@ -221,11 +234,12 @@ def male_elo(mendf, base_elo=1300, K=1, discount=.85):
     return menelodf 
 
 varmendf = mendf
+#varmendf = dates(varmendf, 0, 20210216)
 #varmendf = distance(varmendf, 20)
-#varmendf = discipline(varmendf, "indiv")
+#varmendf = discipline(varmendf, "Mass")
 #varmendf = season(varmendf, 0, 9999)
 varmenelo = male_elo(varmendf)
-varmenelo.to_pickle("~/ski/elo/python/biathlon/men/varmen_all.pkl")
-varmenelo.to_excel("~/ski/elo/python/biathlon/men/varmen_all.xlsx")
+varmenelo.to_pickle("~/ski/elo/python/biathlon/men/varmen_all_k.pkl")
+varmenelo.to_excel("~/ski/elo/python/biathlon/men/varmen_all_k.xlsx")
 print(time.time() - start_time)
 

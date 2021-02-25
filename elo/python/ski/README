@@ -1,0 +1,3 @@
+How to  update elos
+
+Big scrape --> update scrape --> setup.py --> cd GENDER --> GENDERelo2.py -> GENDERupdateelo.py -> varGENDER (don't forget about K)--> knapsack-scrape --> knapsack

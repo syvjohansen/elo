@@ -6,7 +6,7 @@ K=1
 
 #1) Import update
 #2) Convert it so you can see 
-refdf = pd.read_pickle("~/ski/elo/python/ski/men/menelodf2.pkl")
+refdf = pd.read_pickle("~/ski/elo/python/ski/excel365/menelodf2.pkl")
 	#print(refdf)
 
 refdf = refdf.loc[refdf['date']==20200500]
@@ -119,10 +119,10 @@ def elo(refdf, df):
 
 
 df = setup()
-df.to_pickle("~/ski/elo/python/ski/men/menupdate_setup.pkl")
+df.to_pickle("~/ski/elo/python/ski/excel365/menupdate_setup.pkl")
 df = elo(refdf, df)
-df.to_pickle("~/ski/elo/python/ski/men/menupdate.pkl")
-df.to_excel("~/ski/elo/python/ski/men/menupdate.xlsx")
+df.to_pickle("~/ski/elo/python/ski/excel365/menupdate.pkl")
+df.to_excel("~/ski/elo/python/ski/excel365/menupdate.xlsx")
 
 print(time.time() - start_time)
 

@@ -4,7 +4,7 @@ import time
 start_time = time.time()
 
 K=1
-mendf = pd.read_pickle("~/ski/elo/python/ski/mendf.pkl")
+mendf = pd.read_pickle("~/ski/elo/python/ski/excel365/mendf.pkl")
 pd.options.mode.chained_assignment = None
 
 def calc_Evec(R_vector, basis = 10, difference = 400):
@@ -137,8 +137,8 @@ def male_elo(mendf, base_elo=1300, K=1, discount=.85):
     return menelodf 
 
 menelodf = male_elo(mendf)
-menelodf.to_pickle("~/ski/elo/python/ski/menelodf2.pkl") #changed
-menelodf.to_excel("~/ski/elo/python/ski/menelodf2.xlsx") #changed
+menelodf.to_pickle("~/ski/elo/python/ski/excel365/menelodf2.pkl") #changed
+menelodf.to_excel("~/ski/elo/python/ski/excel365/menelodf2.xlsx") #changed
 
 print(time.time() - start_time)
 #def male_elo():
